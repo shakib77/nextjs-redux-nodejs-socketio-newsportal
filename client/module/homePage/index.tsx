@@ -2,14 +2,17 @@ import {useEffect, useState} from "react";
 import {io} from "socket.io-client";
 import {SubmitHandler, useForm} from "react-hook-form";
 import Posts from "../posts";
+import CreatePost from "../createPost/CreatePost";
+import {useDispatch, useSelector} from "react-redux";
 
 const HomePage = () => {
     const [socket, setSocket] = useState<any>(null)
     const [user, setUser] = useState('')
     const [posts, setPosts] = useState<any>([])
-    const [createPost, setCreatePost] = useState<any>()
-    const [userName, setUserName] = useState('');
+    const [newPost, setNewPost] = useState(false)
 
+    const userStore = useSelector((state: any) => state.user)
+    const dispatch = useDispatch()
 
     useEffect(() => {
         setSocket(io('http://localhost:5000'));
@@ -17,6 +20,7 @@ const HomePage = () => {
 
     useEffect(() => {
         socket?.emit('newUser', user)
+        dispatch({type: 'user', users: user})
     }, [socket, user])
 
     useEffect(() => {
@@ -25,22 +29,22 @@ const HomePage = () => {
         })
     }, [socket, posts])
 
-    useEffect(() => {
-        socket?.emit('setPost', (createPost))
-    }, [createPost, socket])
+    const onClickNewPost = () => {
+        setNewPost(true)
+    }
 
-    const {register, handleSubmit,reset, formState: {errors}} = useForm();
+    const {register, handleSubmit, reset, formState: {errors}} = useForm();
 
     const onSubmit: SubmitHandler<any> = (data: any) => {
-        setCreatePost(data.post)
+        setUser(data.userName)
         reset();
     };
 
     return (
         <div className='container'>
-            {user ? (
+            {userStore ? (
                     <>
-                        {userName}
+                        <div>{user}</div>
                         {posts?.map((post: any, i: number) => (
                             <Posts key={i} post={post}/>
                         ))}
@@ -48,18 +52,18 @@ const HomePage = () => {
                 ) :
                 (
                     <div className="login">
-                        <input onChange={(event) => setUserName(event.target.value)} placeholder='username'/>
-                        <button onClick={() => setUser(userName)}>Login</button>
+                        <form onSubmit={handleSubmit(onSubmit)}>
+                            <input type='text' placeholder='username' {...register('userName')}/>
+                            <button type='submit'>Login</button>
+                        </form>
                     </div>
                 )}
+            {user == 'admin' && !newPost && (
+                <button onClick={onClickNewPost}>Create Post</button>
+            )}
 
-            {user == 'admin' && (
-                <div>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        <input type='text' placeholder='Write...' {...register("post")}/>
-                        <button type="submit">Send</button>
-                    </form>
-                </div>
+            {user == 'admin' && newPost && (
+                <CreatePost socket={socket} setNewPost={setNewPost}/>
             )}
         </div>
     );

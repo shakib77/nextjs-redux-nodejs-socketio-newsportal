@@ -1,5 +1,6 @@
 import {SubmitHandler, useForm} from "react-hook-form";
 import {useEffect, useState} from "react";
+import styles from './CreatePost.module.css'
 
 
 const CreatePost = ({socket, setNewPost}: any) => {
@@ -19,11 +20,13 @@ const CreatePost = ({socket, setNewPost}: any) => {
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <input type='text' placeholder='Write...' {...register("post")}/>
-                <button type="submit">Send</button>
-            </form>
+        <div className={styles.container}>
+            <div className={styles.form}>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <textarea  placeholder='Write post here...' {...register("post")}/>
+                    <button type="submit">Send</button>
+                </form>
+            </div>
         </div>
     )
 }

@@ -4,6 +4,9 @@ import styles from '../styles/Home.module.css'
 import HomePage from "../module/homePage";
 
 const Home: NextPage = () => {
+    const date = new Date()
+    const currentYear = date.getFullYear()
+
     return (
         <div className={styles.container}>
             <Head>
@@ -17,7 +20,7 @@ const Home: NextPage = () => {
 
             <footer className={styles.footer}>
                 <a>
-                    Copy right by shaon
+                    ⓒ by Shaon {currentYear}
 
                 </a>
             </footer>

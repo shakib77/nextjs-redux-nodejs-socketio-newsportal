@@ -4,6 +4,7 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import Posts from "../posts";
 import CreatePost from "../createPost/CreatePost";
 import {useDispatch, useSelector} from "react-redux";
+import styles from './HomePage.module.css'
 
 const HomePage = () => {
     const [socket, setSocket] = useState<any>(null)
@@ -41,25 +42,27 @@ const HomePage = () => {
     };
 
     return (
-        <div className='container'>
+        <div className={styles.container}>
             {userStore ? (
                     <>
-                        <div>{user}</div>
+                        <div className={styles.user}>User: <span className={styles.user_span}>{user}</span></div>
                         {posts?.map((post: any, i: number) => (
                             <Posts key={i} post={post}/>
                         ))}
                     </>
                 ) :
                 (
-                    <div className="login">
-                        <form onSubmit={handleSubmit(onSubmit)}>
-                            <input type='text' placeholder='username' {...register('userName')}/>
-                            <button type='submit'>Login</button>
-                        </form>
+                    <div className={styles.login}>
+                        <div className={styles.form}>
+                            <form onSubmit={handleSubmit(onSubmit)} className={styles.register_form}>
+                                <input type='text' placeholder='username' {...register('userName')}/>
+                                <button type='submit'>Login</button>
+                            </form>
+                        </div>
                     </div>
                 )}
             {user == 'admin' && !newPost && (
-                <button onClick={onClickNewPost}>Create Post</button>
+                <button onClick={onClickNewPost} className={styles.add_post_btn}>Create Post</button>
             )}
 
             {user == 'admin' && newPost && (

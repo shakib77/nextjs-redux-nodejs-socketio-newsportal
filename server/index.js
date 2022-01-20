@@ -20,6 +20,7 @@ const removeUser = (socketId) => {
 
 io.on('connection', (socket) => {
     socket.on('newUser', (userName) => {
+        console.log('userName->', userName);
         addNewUser(userName, socket.id)
     });
 
@@ -36,3 +37,5 @@ io.on('connection', (socket) => {
 io.listen(5000, ()=> {
     console.log('Server is running on Port: 5000')
 })
+
+console.log('Server is up on Port: 5000')
